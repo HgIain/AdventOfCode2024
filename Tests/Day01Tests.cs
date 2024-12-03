@@ -13,7 +13,7 @@ namespace Day01.Tests
     public class Day01Tests
     {
         [TestMethod]
-        public void TestDataFullString()
+        public void TestDataDifferenceCheck()
         {
             var result = Program.DoWork(true,false);
 
@@ -21,21 +21,21 @@ namespace Day01.Tests
         }
 
         [TestMethod]
-        public void FullDataFullString()
+        public void FullDataDifferenceCheck()
         {
             var result = Program.DoWork(false, false);
 
             Assert.AreEqual(2742123, result);
         }
         [TestMethod]
-        public void TestDataSkippedString()
+        public void TestDataFrequencyCheck()
         {
             var result = Program.DoWork(true, true);
 
             Assert.AreEqual(31, result);
         }
         [TestMethod]
-        public void FullDataSkippedString()
+        public void FullDataFrequencyCheck()
         {
             var result = Program.DoWork(false, true);
 
