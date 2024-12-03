@@ -7,10 +7,10 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Text.RegularExpressions;
 
-namespace Day3.Tests
+namespace Day03.Tests
 {
     [TestClass()]
-    public class Day3Tests
+    public class Day03Tests
     {
         [TestMethod]
         public void TestDataFullString()
