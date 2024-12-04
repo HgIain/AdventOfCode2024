@@ -26,5 +26,21 @@ namespace Day04.Tests
 
             Assert.AreEqual(2534, result);
         }
+
+        [TestMethod]
+        public void CrossDebugTest()
+        {
+            var result = Program.DoWork(false,true);
+
+            Assert.AreEqual(9, result);
+        }
+
+        [TestMethod]
+        public void CrossFullTest()
+        {
+            var result = Program.DoWork(true,true);
+
+            Assert.AreEqual(1866, result);
+        }
     }
 }
