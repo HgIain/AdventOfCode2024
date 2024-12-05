@@ -17,7 +17,6 @@ namespace Day05v2
         [GeneratedRegex(@"(\d+)+")]
         private static partial Regex updatePagesRegex();
 
-
         public static int DoWork(bool fullData, bool onlyInOrder)
         {
             string[] input;
@@ -29,11 +28,11 @@ namespace Day05v2
 
             int i = 0;
 
-            Dictionary<int, SortedSet<int>> pageOrders = [];
+            var pageOrders = new Dictionary<int, SortedSet<int>>();
 
-            for(;i<input.Length; i++)
+            for (; i < input.Length; i++)
             {
-                if(String.IsNullOrWhiteSpace(input[i]))
+                if (String.IsNullOrWhiteSpace(input[i]))
                 {
                     break;
                 }
@@ -43,43 +42,32 @@ namespace Day05v2
                 int x = Convert.ToInt32(match.Groups[1].Value);
                 int y = Convert.ToInt32(match.Groups[2].Value);
 
-                if (pageOrders.TryGetValue(x, out var set))
+                if (!pageOrders.TryGetValue(x, out var set))
                 {
-                    set.Add(y);
+                    set = new SortedSet<int>();
+                    pageOrders[x] = set;
                 }
-                else
-                {
-                    pageOrders[x] = new SortedSet<int> { y };
-                }
+                set.Add(y);
             }
 
             i++;
 
             int result = 0;
 
-            for (;i<input.Length; i++)
+            for (; i < input.Length; i++)
             {
                 var matches = updatePagesRegex().Matches(input[i]);
 
                 var listInts = new List<int>();
-
                 bool success = true;
 
-                foreach (var match in matches)
+                foreach (Match match in matches)
                 {
-                    int newPage = int.Parse(match.ToString()!);
+                    int newPage = int.Parse(match.Value);
 
-                    bool inOrder = true;
-
-                    if (pageOrders.TryGetValue(newPage, out var set))
-                    {
-                        inOrder = listInts.All(x => !set.Contains(x));
-                    }
-
-                    if (!inOrder)
+                    if (pageOrders.TryGetValue(newPage, out var set) && listInts.Any(x => set.Contains(x)))
                     {
                         success = false;
-
                         if (onlyInOrder)
                         {
                             break;
@@ -89,43 +77,37 @@ namespace Day05v2
                     listInts.Add(newPage);
                 }
 
-                if(!success && onlyInOrder)
+                if (!success && onlyInOrder)
                 {
                     continue;
                 }
 
-                if(success && !onlyInOrder)
+                if (success && !onlyInOrder)
                 {
                     continue;
                 }
 
                 if (!onlyInOrder)
                 {
-                    // ok, let's reorder these lists
+                    // Reorder the list using a custom comparator
                     listInts.Sort((a, b) =>
                     {
-                        if(pageOrders.TryGetValue(a, out var set))
+                        if (pageOrders.TryGetValue(a, out var setA) && setA.Contains(b))
                         {
-                            if (set.Contains(b))
-                            {
-                                return -1;
-                            }
+                            return -1;
                         }
-                        if (pageOrders.TryGetValue(b, out var set2))
+                        if (pageOrders.TryGetValue(b, out var setB) && setB.Contains(a))
                         {
-                            if (set2.Contains(a))
-                            {
-                                return 1;
-                            }
+                            return 1;
                         }
                         return 0;
                     });
                 }
 
-                int half = (listInts.Count / 2);
-
+                int half = listInts.Count / 2;
                 result += listInts[half];
             }
+
             return result;
         }
     }
