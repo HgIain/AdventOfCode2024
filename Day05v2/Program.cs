@@ -29,7 +29,7 @@ namespace Day05v2
 
             int i = 0;
 
-            List<(int, int)> pageOrders = [];
+            Dictionary<int, SortedSet<int>> pageOrders = [];
 
             for(;i<input.Length; i++)
             {
@@ -43,7 +43,14 @@ namespace Day05v2
                 int x = Convert.ToInt32(match.Groups[1].Value);
                 int y = Convert.ToInt32(match.Groups[2].Value);
 
-                pageOrders.Add((x, y));
+                if (pageOrders.TryGetValue(x, out var set))
+                {
+                    set.Add(y);
+                }
+                else
+                {
+                    pageOrders[x] = new SortedSet<int> { y };
+                }
             }
 
             i++;
@@ -62,7 +69,12 @@ namespace Day05v2
                 {
                     int newPage = int.Parse(match.ToString()!);
 
-                    bool inOrder = pageOrders.Where(x => x.Item1 == newPage).All(x => !listInts.Contains(x.Item2));
+                    bool inOrder = true;
+
+                    if (pageOrders.TryGetValue(newPage, out var set))
+                    {
+                        inOrder = listInts.All(x => !set.Contains(x));
+                    }
 
                     if (!inOrder)
                     {
@@ -92,13 +104,19 @@ namespace Day05v2
                     // ok, let's reorder these lists
                     listInts.Sort((a, b) =>
                     {
-                        if (pageOrders.Contains((a, b)))
+                        if(pageOrders.TryGetValue(a, out var set))
                         {
-                            return -1;
+                            if (set.Contains(b))
+                            {
+                                return -1;
+                            }
                         }
-                        if (pageOrders.Contains((b, a)))
+                        if (pageOrders.TryGetValue(b, out var set2))
                         {
-                            return 1;
+                            if (set2.Contains(a))
+                            {
+                                return 1;
+                            }
                         }
                         return 0;
                     });
